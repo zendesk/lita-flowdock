@@ -99,6 +99,7 @@ module Lita
           def store_flows
             client.get("/flows").each do |flow|
               Lita.redis.set("flows/#{flow['parameterized_name']}", flow['id'])
+              Lita.redis.set("flows_id/#{flow['id']}", flow['parameterized_name'])
             end
           end
       end
