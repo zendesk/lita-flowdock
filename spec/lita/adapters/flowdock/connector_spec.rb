@@ -41,6 +41,7 @@ describe Lita::Adapters::Flowdock::Connector, lita: true do
       allow(fd_client).to receive(:get).with('/users').and_return([])
       allow(fd_client).to receive(:get).with("/flows").and_return(flows)
       expect(Lita.redis).to receive(:set).with("flows/#{flows[0]['parameterized_name']}", flows[0]['id'])
+      expect(Lita.redis).to receive(:set).with("flows_id/#{flows[0]['id']}", flows[0]['parameterized_name'])
       subject.new(robot, api_token, organization, flows, fd_client)
     end
   end
