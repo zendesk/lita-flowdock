@@ -9,7 +9,8 @@ module Lita
     end
 
     def tags
-      @data['tags']
+      binding.pry
+      @data['tags'].any? ? data['tags'] : body.scan(/(?<=\s|\A)#(.*?)(?=\s|\z)/).flatten
     end
 
     def thread_id

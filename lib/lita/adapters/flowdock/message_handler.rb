@@ -26,6 +26,8 @@ module Lita
             handle_action
           when "tag-change"
             handle_tag_change
+          when "message-edit"
+            handle_message if replay_edits?
           else
             handle_unknown
           end
@@ -36,7 +38,11 @@ module Lita
 
           def body
             content = data['content'] || ""
-            return content.is_a?(Hash) ? content['text'] : content
+            if content.is_a?(Hash)
+              content.keys.include?('updated_content') ? content['updated_content'] : content['text']
+            else
+              content
+            end
           end
 
           def dispatch_message(user)
@@ -44,8 +50,9 @@ module Lita
               user: user,
               room: flow,
               private_message: private_message?,
-              message_id: private_message? ? data['id'] : data['thread']['initial_message']
+              message_id: message_id
             )
+            binding.pry
             message = FlowdockMessage.new(robot, body, source, data)
             robot.receive(message)
           end
@@ -97,6 +104,15 @@ module Lita
           def private_message?
             data.has_key?('to')
           end
+
+          def replay_edits?
+            @robot.registry.config.adapters.flowdock.replay_edits == :enabled
+          end
+
+          def message_id
+            (private_message? || type == 'message-edit') ? data['id'] : data['thread']['initial_message']
+          end
+
       end
     end
   end

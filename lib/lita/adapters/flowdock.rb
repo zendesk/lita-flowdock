@@ -12,6 +12,7 @@ module Lita
       config :thread_responses, type: Symbol, required: false, default: :enabled
       config :private_messages, type: Symbol, required: false, default: :enabled
       config :active_user, type: Symbol, required: false, default: :enabled
+      config :replay_edits, type: Symbol, required: false, default: :disabled
 
 
       def mention_format(name)
